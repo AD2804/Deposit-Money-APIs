@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Deposit Management</title>
+</head>
+<body>
+  <h1>Deposit Management</h1>
+
+  <!-- Create Deposit -->
+  <h2>Create Deposit</h2>
+  <form id="create-form">
+    <input type="text" id="create-actno" placeholder="Account Number" required><br>
+    <input type="text" id="create-name" placeholder="Name" required><br>
+    <input type="number" id="create-amount" placeholder="Amount" required><br>
+    <input type="date" id="create-date" placeholder="Date" required><br>
+    <button type="submit">Create</button>
+  </form>
+
+  <!-- Update Deposit -->
+  <h2>Update Deposit</h2>
+  <form id="update-form">
+    <input type="text" id="update-id" placeholder="Deposit ID" required><br>
+    <input type="text" id="update-actno" placeholder="Account Number"><br>
+    <input type="text" id="update-name" placeholder="Name"><br>
+    <input type="number" id="update-amount" placeholder="Amount"><br>
+    <input type="date" id="update-date" placeholder="Date"><br>
+    <button type="submit">Update</button>
+  </form>
+
+  <!-- Delete Deposit -->
+  <h2>Delete Deposit</h2>
+  <form id="delete-form">
+    <input type="text" id="delete-id" placeholder="Deposit ID" required><br>
+    <button type="submit">Delete</button>
+  </form>
+
+  <!-- Show Deposits -->
+  <h2>Deposits</h2>
+  <button id="show-deposits">Show Deposits</button>
+  <pre id="deposits-list"></pre>
+
+  <script>
+    // Function to create a deposit
+    document.getElementById('create-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const data = {
+        ActNo: document.getElementById('create-actno').value,
+        name: document.getElementById('create-name').value,
+        Amount: document.getElementById('create-amount').value,
+        Date: document.getElementById('create-date').value,
+      };
+
+      fetch('http://localhost:3000/deposits/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      .then(response => response.json())
+      .then(data => alert(data.message))
+      .catch(error => console.error('Error:', error));
+    });
+
+    // Function to update a deposit
+    document.getElementById('update-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const id = document.getElementById('update-id').value;
+      const data = {
+        ActNo: document.getElementById('update-actno').value,
+        name: document.getElementById('update-name').value,
+        Amount: document.getElementById('update-amount').value,
+        Date: document.getElementById('update-date').value,
+      };
+
+      fetch(`http://localhost:3000/deposits/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      .then(response => response.json())
+      .then(data => alert(data.message))
+      .catch(error => console.error('Error:', error));
+    });
+
+    // Function to delete a deposit
+    document.getElementById('delete-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const id = document.getElementById('delete-id').value;
+
+      fetch(`http://localhost:3000/deposits/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      .then(response => response.json())
+      .then(data => alert(data.message))
+      .catch(error => console.error('Error:', error));
+    });
+
+    // Function to show all deposits
+    document.getElementById('show-deposits').addEventListener('click', function() {
+      fetch('http://localhost:3000/deposits/list')
+      .then(response => response.json())
+      .then(data => {
+        const depositsList = document.getElementById('deposits-list');
+        depositsList.textContent = JSON.stringify(data, null, 2);
+      })
+      .catch(error => console.error('Error:', error));
+    });
+  </script>
+</body>
+</html>
